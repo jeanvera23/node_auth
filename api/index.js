@@ -3,10 +3,17 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 
-app.get('/api', (req, res) => {
+app.get('/jean', (req, res) => {
     res.json({ 'message': 'Welcome Jean' })
 });
 
+app.get('/api/test', (req, res) => {
+    res.json({ 'message': 'Welcome test' })
+});
+
+app.get('/pi', (req, res) => {
+    res.json({ 'message': 'Welcome API' })
+});
 app.post('/api/posts', verifyToken, (req, res) => {
     jwt.verify(req.token, 'secretKey', (err, authData) => {
         if (err) {
