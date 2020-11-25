@@ -1,7 +1,6 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+const { MongoClient } = require('mongodb');
+
 
 const app = express();
 
@@ -12,16 +11,24 @@ app.get('/jean', (req, res) => {
 app.get('/api/test', (req, res) => {
     res.json({ 'message': 'Welcome test' })
 });
-app.get('/mongodb', (req, res) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("mydbtest");
-        dbo.collection("users").find({}, function (err, result) {
-            if (err) throw err;
-            res.json(result);
-            db.close();
-        });
-    });
+app.get('/mongodb', async (req, res) => {
+
+    var url = "mongodb://localhost:27017/";
+    const client = new MongoClient(url);
+
+    try {
+        // Connect to the MongoDB cluster
+        await client.connect();
+
+        const db = client.db('dbtest');
+        const collection = db.collection('users');
+        const items = await collection.find().toArray();
+        res.json(items);
+    } catch (e) {
+        console.error(e);
+    } finally {
+        await client.close();
+    }
 });
 const port = process.env.PORT || 3000
 app.listen(port, (e) => {
